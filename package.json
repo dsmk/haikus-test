@@ -6,7 +6,7 @@
     "license": "MIT",
     "author": "Microsoft",
     "scripts": {
-        "start": "node index.js",
+        "start": "node logparse.js - bulogin-test.txt",
         "dev": "nodemon"
     },
     "dependencies": {
