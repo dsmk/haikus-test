@@ -91,11 +91,26 @@ class LogParser {
     }
   }
 
-  generate_csv () {
-    console.log('"number","sponsorcode","pintype","mkmbox","sendmail","person","host"');
+  toCSV () {
+    var lines = [];
+
+    lines.push('"number","sponsorcode","pintype","mkmbox","sendmail","person","host"');
     this.data.forEach( (key) => {
-      console.log('"%s",%s', this.data.get(key), key);
+      lines.push(`"${this.data.get(key)}",${key}`);
     });
+    // to get the final newline
+    lines.push('');
+    return( lines.join("\n"));
+  }
+
+  generate_csv (fname) {
+    console.log("fname=%s", fname);
+    var csv = this.toCSV();
+    if (fname == '-') {
+      console.log("%s", csv);
+    } else {
+      fs.writeFileSync(fname, csv);
+    }
   }
 }
 
@@ -129,7 +144,7 @@ let parser = new LogParser();
 // find the filenames we should process
 console.log("length=%d args=%s", process.argv.length, process.argv);
 if (process.argv.length < 4) {
-  console.log("%s [outputcsv] [files...]");
+  console.log("%s [outputcsv] [files...]", process.argv[1]);
 } else {
   const csv_file = process.argv[2];
   const inputs = process.argv.slice(3);
@@ -140,9 +155,6 @@ if (process.argv.length < 4) {
     console.log("fname=%s", inputs[k]);
     parser.add_file(inputs[k]);
   }
-}
 
-// parser.add_line(bulogin_msg);
-// parser.add_file("bulogin-test.txt");
-// parser.add_line(buweb_msg);
-parser.generate_csv();
+  parser.generate_csv(csv_file);
+}
